@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>神仙 | 国际空运操盘手 & 货代知识200问</title>
+    <title>神仙 | 国际空运操盘手 & 货代知识124问</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
@@ -624,60 +624,25 @@
             color: var(--color-text-primary);
         }
 
-        /* QR Code Overlay */
-        .contact-card-qr {
-            position: relative;
-            cursor: pointer;
+        .contact-card-copy {
+            width: 100%;
+            font: inherit;
+            color: inherit;
         }
 
-        .contact-card-qr:hover .qr-overlay,
-        .contact-card-qr.show-qr .qr-overlay {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
+        .contact-card-copy:focus-visible {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 4px;
         }
 
-        .qr-overlay {
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            margin-top: var(--space-sm);
-            padding: var(--space-md);
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transition: all 0.3s ease;
-            z-index: 100;
-            min-width: 200px;
-        }
-
-        .qr-overlay::before {
-            content: '';
-            position: absolute;
-            top: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-bottom: 8px solid var(--color-surface);
-        }
-
-        .qr-image {
-            width: 180px;
-            height: 180px;
-            border-radius: 8px;
+        .contact-card-copy .contact-label,
+        .contact-card-copy .contact-value {
             display: block;
         }
 
-        .qr-hint {
-            text-align: center;
+        .contact-copy-status {
             font-size: 0.8125rem;
-            color: var(--color-text-muted);
+            color: var(--color-accent);
             margin-top: var(--space-sm);
         }
 
@@ -1459,28 +1424,22 @@
                             <div class="contact-value">138 1653 9222</div>
                         </div>
                     </a>
-                    <div class="contact-card contact-card-qr" onclick="this.classList.toggle('show-qr')">
-                        <div class="contact-icon">💬</div>
-                        <div class="contact-info">
-                            <div class="contact-label">微信</div>
-                            <div class="contact-value">jnb931</div>
-                        </div>
-                        <div class="qr-overlay">
-                            <img src="wechat-qr.png" alt="微信二维码" class="qr-image">
-                            <div class="qr-hint">扫码添加</div>
-                        </div>
-                    </div>
-                    <div class="contact-card contact-card-qr" onclick="this.classList.toggle('show-qr')">
-                        <div class="contact-icon">🐧</div>
-                        <div class="contact-info">
-                            <div class="contact-label">QQ</div>
-                            <div class="contact-value">78229857</div>
-                        </div>
-                        <div class="qr-overlay">
-                            <img src="qq-qr.png" alt="QQ二维码" class="qr-image">
-                            <div class="qr-hint">扫码添加</div>
-                        </div>
-                    </div>
+                    <button type="button" class="contact-card contact-card-copy" onclick="copyContact(this)" aria-label="复制微信号 jnb931">
+                        <span class="contact-icon" aria-hidden="true">💬</span>
+                        <span class="contact-info">
+                            <span class="contact-label">微信</span>
+                            <span class="contact-value">jnb931</span>
+                        </span>
+                        <span class="contact-copy-status" role="status">点击复制微信号</span>
+                    </button>
+                    <button type="button" class="contact-card contact-card-copy" onclick="copyContact(this)" aria-label="复制QQ号 78229857">
+                        <span class="contact-icon" aria-hidden="true">🐧</span>
+                        <span class="contact-info">
+                            <span class="contact-label">QQ</span>
+                            <span class="contact-value">78229857</span>
+                        </span>
+                        <span class="contact-copy-status" role="status">点击复制QQ号</span>
+                    </button>
                 </div>
             </div>
         </section>
@@ -1502,7 +1461,7 @@
         <div class="kb-layout">
             <!-- Sidebar -->
             <aside class="kb-sidebar" id="kbSidebar">
-                <div class="kb-sidebar-title">知识库</div>
+                <div class="kb-sidebar-title">知识库 · <span id="kbAllCount">124</span> 问</div>
                 <div id="kbNav"></div>
             </aside>
 
@@ -1516,9 +1475,9 @@
                     </div>
                     <h1 class="kb-title" id="kbTitle">A篇：基础知识篇</h1>
                     <div class="kb-meta">
-                        <span class="kb-tag">第 1-30 问</span>
+                        <span class="kb-tag" id="kbQuestionRange">题号 1-10、12-20、22-30</span>
                         <span class="kb-tag">新人必读</span>
-                        <span>共 <span id="kbTotalCount">30</span> 个问题</span>
+                        <span>共 <span id="kbTotalCount">28</span> 个问题</span>
                     </div>
                 </div>
 
@@ -2304,13 +2263,13 @@
 
         // Chapter info
         const chapters = [
-            { id: 'a', name: 'A 基础知识篇', range: '1-30', icon: '📚' },
-            { id: 'b', name: 'B 询价比价篇', range: '31-60', icon: '💰' },
+            { id: 'a', name: 'A 基础知识篇', range: '1-10、12-20、22-30', icon: '📚' },
+            { id: 'b', name: 'B 询价比价篇', range: '32-40、42-50、52-60', icon: '💰' },
             { id: 'c', name: 'C 操作实务篇', range: '61-90', icon: '⚙️' },
-            { id: 'd', name: 'D 报关清关篇', range: '91-120', icon: '📋' },
-            { id: 'e', name: 'E 异常处理篇', range: '121-150', icon: '⚠️' },
-            { id: 'f', name: 'F 行业进阶篇', range: '151-180', icon: '🚀' },
-            { id: 'g', name: 'G 客户服务篇', range: '181-200', icon: '🤝' }
+            { id: 'd', name: 'D 报关清关篇', range: '91-100', icon: '📋' },
+            { id: 'e', name: 'E 异常处理篇', range: '121-130', icon: '⚠️' },
+            { id: 'f', name: 'F 行业进阶篇', range: '151-160', icon: '🚀' },
+            { id: 'g', name: 'G 客户服务篇', range: '181-189', icon: '🤝' }
         ];
 
         // State
@@ -2329,6 +2288,8 @@
                 });
             });
 
+            document.getElementById('kbAllCount').textContent = allQuestions.length;
+            document.title = `神仙 | 国际空运操盘手 & 货代知识${allQuestions.length}问`;
             renderKbNav();
             loadKbChapter('a');
 
@@ -2342,6 +2303,23 @@
             // Scroll reveal
             handleScrollReveal();
             window.addEventListener('scroll', handleScrollReveal);
+        }
+
+        // Copy the visible contact value without navigating away.
+        async function copyContact(button) {
+            const value = button.querySelector('.contact-value').textContent.trim();
+            const status = button.querySelector('.contact-copy-status');
+            try {
+                await navigator.clipboard.writeText(value);
+                status.textContent = '已复制';
+            } catch (error) {
+                const selection = window.getSelection();
+                const range = document.createRange();
+                range.selectNodeContents(button.querySelector('.contact-value'));
+                selection.removeAllRanges();
+                selection.addRange(range);
+                status.textContent = '无法自动复制，请长按或手动复制号码';
+            }
         }
 
         // Page navigation
@@ -2425,7 +2403,8 @@
             const questions = qaData[chapterId] || [];
 
             document.getElementById('kbCurrentChapter').textContent = chapter.name;
-            document.getElementById('kbTitle').textContent = `${chapter.name}（第${chapter.range}问）`;
+            document.getElementById('kbTitle').textContent = `${chapter.name}（${questions.length}问）`;
+            document.getElementById('kbQuestionRange').textContent = `题号 ${chapter.range}`;
             document.getElementById('kbTotalCount').textContent = questions.length;
 
             renderQaList();
